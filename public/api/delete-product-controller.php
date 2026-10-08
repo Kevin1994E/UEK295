@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles the delete of products.
+ */
 class DeleteProductController
 {
     #[OAT\Delete(
@@ -16,7 +19,7 @@ class DeleteProductController
                 name: 'sku',
                 in: 'path',
                 required: true,
-                description: 'ID der Kategorie',
+                description: 'sku des Produkts',
                 schema: new OAT\Schema(
                     type: 'string',
                     example: 'MAR-001'
@@ -43,7 +46,13 @@ class DeleteProductController
         ]
     )]
 
-
+    /**
+     * This function validates the product SKU and deletes the product.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments containing the product SKU.
+     * @return Response The HTTP response.
+     */
     public static function deleteProduct(Request $request, Response $response, array $args)
     {
 
@@ -58,7 +67,9 @@ class DeleteProductController
         }
         // Ab hier ist der Token gültig
 
-         $sku = trim($args["sku"]);
+        //Liest sku aus URL und entfernt Leerzeichen.
+        $sku = trim($args["sku"]);
+
         if (strlen($sku) < 1 || strlen($sku) > 100) {
             $response->getBody()->write(json_encode([
                 "error" => "SKU muss 1 bis 100 Zeichen enthalten."
@@ -75,7 +86,7 @@ class DeleteProductController
 
         $result = $statement->get_result();
 
-        // Prüft, ob die Kategorie existiert
+        // Prüft, ob das Produkt existiert
         $row_count = mysqli_num_rows($result);
 
         if ($row_count == 0) {

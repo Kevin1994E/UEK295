@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles retrieving all products from the database.
+ */
 class ListProductsController
 {
     #[OAT\Get(
@@ -23,7 +26,12 @@ class ListProductsController
         ]
     )]
 
-
+    /**
+     * This function retrieves all products and returns them as JSON.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @return Response The HTTP response.
+     */
     public static function listProducts(Request $request, Response $response)
     {
 
@@ -45,14 +53,14 @@ class ListProductsController
         $result = $statement->get_result();
 
 
-        // Collect all rows.
-        $categories = [];
+        // Collect all rows in a list.
+        $products = [];
 
-        while ($category = mysqli_fetch_assoc($result)) {
-            $categories[] = $category;
+        while ($product = mysqli_fetch_assoc($result)) {
+            $products[] = $product;
         }
 
-        $response->getBody()->write(json_encode($categories));
+        $response->getBody()->write(json_encode($products));
 
         return $response
             ->withStatus(200)

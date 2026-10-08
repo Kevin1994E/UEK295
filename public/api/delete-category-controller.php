@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles the delete of categories.
+ */
 class DeleteCategoryController
 {
     #[OAT\Delete(
@@ -43,7 +46,13 @@ class DeleteCategoryController
         ]
     )]
 
-
+    /**
+     * This function validates the category ID and deletes the category.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments containing the category ID.
+     * @return Response The HTTP response.
+     */
     public static function deleteCategory(Request $request, Response $response, array $args)
     {
 
@@ -60,6 +69,7 @@ class DeleteCategoryController
 
         $categoryId = $args["category_id"];
 
+        //Prüfung der Kategorie (Ganzzahl in der erlaubten Range).
         $categoryId = filter_var(
             $args["category_id"],
             FILTER_VALIDATE_INT,

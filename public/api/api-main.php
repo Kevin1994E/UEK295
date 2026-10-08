@@ -9,9 +9,21 @@ use OpenApi\Attributes as OAT;
     version: "1.0.0"
 )]
 
-class ApiMain {
-public static function index(Request $request, Response $response, $args) {
-$response->getBody()->write("Hello, world!");
-return $response;
-}
+/**
+ * This class contains the main API functions.
+ */
+class ApiMain
+{
+    /**
+     * This function returns the API welcome message.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args 
+     * @return Response the HTTP response.
+     */
+    public static function index(Request $request, Response $response, $args)
+    {
+        $response->getBody()->write("Hello, world!");
+        return $response;
+    }
 }

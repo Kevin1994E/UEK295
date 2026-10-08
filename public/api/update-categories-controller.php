@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles updating existing categories in the database.
+ */
 class UpdateCategoryController
 {
     #[OAT\Patch(
@@ -12,34 +15,34 @@ class UpdateCategoryController
         summary: 'Update der Felder active und name einer Kategorie.',
         tags: ['categorie'],
         parameters: [
-        new OAT\Parameter(
-            name: 'category_id',
-            in: 'path',
-            required: true,
-            description: 'ID der Kategorie.',
-            schema: new OAT\Schema(
-                type: 'integer',
-                example: 1
-            )
-        )
-        ],
-        requestBody: new OAT\RequestBody(
-        required: true,
-        description: 'JSON-Body muss active und name enthalten.',
-        content: new OAT\JsonContent(
-            properties: [
-                new OAT\Property(
-                    property: 'active',
+            new OAT\Parameter(
+                name: 'category_id',
+                in: 'path',
+                required: true,
+                description: 'ID der Kategorie.',
+                schema: new OAT\Schema(
                     type: 'integer',
                     example: 1
-                ),
-                new OAT\Property(
-                    property: 'name',
-                    type: 'string',
-                    example: 'Dive Masks'
-                )   
-            ]
-        )
+                )
+            )
+        ],
+        requestBody: new OAT\RequestBody(
+            required: true,
+            description: 'JSON-Body muss active und name enthalten.',
+            content: new OAT\JsonContent(
+                properties: [
+                    new OAT\Property(
+                        property: 'active',
+                        type: 'integer',
+                        example: 1
+                    ),
+                    new OAT\Property(
+                        property: 'name',
+                        type: 'string',
+                        example: 'Dive Masks'
+                    )
+                ]
+            )
         ),
         responses: [
             new OAT\Response(
@@ -55,12 +58,19 @@ class UpdateCategoryController
                 description: 'Nicht Authentifiziert.'
             ),
             new OAT\Response(
-            response: 404,
-            description: 'Kategorie nicht gefunden. :('
+                response: 404,
+                description: 'Kategorie nicht gefunden. :('
             )
         ]
     )]
 
+    /**
+     * This function validates the category ID and input data, then updates the category.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments containing the category ID.
+     * @return Response The HTTP response.
+     */
     public static function updateCategory(Request $request, Response $response, array $args)
     {
 
@@ -89,7 +99,7 @@ class UpdateCategoryController
 
         $result = $statement->get_result();
 
-         // Prüft, ob die Kategorie existiert
+        // Prüft, ob die Kategorie existiert
         $row_count = mysqli_num_rows($result);
 
         if ($row_count == 0) {
@@ -115,7 +125,7 @@ class UpdateCategoryController
 
         $requestBody = $request->getParsedBody();
 
-        //Prüft ob alle Pflichtfelder vorhanden sind im Json.
+        //Prüft ob alle Pflichtfelder vorhanden und nicht null sind.
         if (!isset($requestBody['name'], $requestBody['active'])) {
             $response->getBody()->write(json_encode(
                 ["error" => "JSON pflichtfelder fehlen"]
@@ -128,6 +138,7 @@ class UpdateCategoryController
         $name = trim($requestBody['name']);
         $active = $requestBody['active'];
 
+        // Erlaubt für active nur die Werte 0 und 1.
         if ($active !== 0 && $active !== 1) {
             $response->getBody()->write(json_encode(
                 ["error" => "Keine gültige Zahl (nur 1 oder 0 möglich)"]
@@ -137,6 +148,7 @@ class UpdateCategoryController
                 ->withHeader("Content-Type", "application/json");
         }
 
+        // Prüft, ob der Name zwischen 1 und 500 Zeichen lang ist.
         if (strlen($name) > 500 || strlen($name) < 1) {
             $response->getBody()->write(json_encode(
                 ["error" => "Keine Zeichen oder zu viele Zeichen eingegeben. max.500 Zeichen"]
@@ -154,7 +166,7 @@ class UpdateCategoryController
 
 
         return $response
-            ->withStatus(201)
+            ->withStatus(200)
             ->withHeader("Content-Type", "application/json");
     }
 }

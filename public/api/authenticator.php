@@ -4,7 +4,10 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-class authenticator
+/**
+ * This class handles the user authentication.
+ */
+class Authenticator
 {
     #[OAT\Post(
         path: '/api/v1/authenticate',
@@ -40,6 +43,13 @@ class authenticator
         ]
     )]
 
+    /**
+     * This function authenticates a user and creates a token.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments.
+     * @return Response The HTTP response.
+     */
     public static function autenticate(Request $request, Response $response, $args)
     {
         global $config;

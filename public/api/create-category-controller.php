@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles the creation of new categories.
+ */
 class CreateCategoryController
 {
     #[OAT\Post(
@@ -17,14 +20,14 @@ class CreateCategoryController
             content: new OAT\JsonContent(
                 properties: [
                     new OAT\Property(
-                    property: 'active',
-                    type: 'integer',
-                    example: 1
+                        property: 'active',
+                        type: 'integer',
+                        example: 1
                     ),
                     new OAT\Property(
-                    property: 'name',
-                    type: 'string',
-                    example: 'Dive Masks'
+                        property: 'name',
+                        type: 'string',
+                        example: 'Dive Masks'
                     )
                 ]
             )
@@ -45,6 +48,12 @@ class CreateCategoryController
         ]
     )]
 
+    /**
+     * This function validates the input and creates a new category.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @return Response The HTTP response.
+     */
     public static function createCategory(Request $request, Response $response)
     {
 
@@ -62,7 +71,7 @@ class CreateCategoryController
         $statement = $database->prepare("INSERT INTO category (active, name) VALUES (?, ?)");
 
         $requestBody = $request->getParsedBody();
-        
+
         //Prüft ob alle Pflichtfelder vorhanden sind im Json.
         if (!isset($requestBody['name'], $requestBody['active'])) {
             $response->getBody()->write(json_encode(
@@ -73,9 +82,11 @@ class CreateCategoryController
                 ->withHeader("Content-Type", "application/json");
         }
 
+        // Entfernt Leerzeichen am Anfang und Ende des Namens.
         $name = trim($requestBody['name']);
         $active = $requestBody['active'];
 
+        // Erlaubt für active nur die Werte 0 und 1.
         if ($active !== 0 && $active !== 1) {
             $response->getBody()->write(json_encode(
                 ["error" => "Keine gültige Zahl (nur 1 oder 0 möglich)"]
@@ -85,6 +96,7 @@ class CreateCategoryController
                 ->withHeader("Content-Type", "application/json");
         }
 
+        // Prüft ob der Name zwischen 1 und 500 Zeichen lang ist.
         if (strlen($name) > 500 || strlen($name) < 1) {
             $response->getBody()->write(json_encode(
                 ["error" => "Keine Zeichen oder zu viele Zeichen eingegeben. max.500 Zeichen"]
@@ -94,6 +106,7 @@ class CreateCategoryController
                 ->withHeader("Content-Type", "application/json");
         }
 
+        //Speichert die Kategorie in der DB.
         $statement->execute([$active, $name]);
 
         $response->getBody()->write(json_encode(

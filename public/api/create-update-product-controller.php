@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles the creation and updating of products.
+ */
 class CreateUpdateProductController
 {
     #[OAT\Put(
@@ -94,6 +97,13 @@ class CreateUpdateProductController
         ]
     )]
 
+    /**
+     * This function validates product data and creates or updates a product.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments containing the product SKU.
+     * @return Response The HTTP response.
+     */
     public static function createUpdateProducts(Request $request, Response $response, array $args)
     {
 
@@ -128,8 +138,7 @@ class CreateUpdateProductController
         $price = $requestBody["price"];
         $stock = $requestBody["stock"];
 
-        //Validierungen
-
+        //Validierungen der Daten
         //Prüfung SKU
         $sku = trim($args["sku"]);
         if (strlen($sku) < 1 || strlen($sku) > 100) {
@@ -142,7 +151,7 @@ class CreateUpdateProductController
                 ->withHeader("Content-Type", "application/json");
         }
 
-        //Prüfung active
+        // Erlaubt für active nur die Werte 0 und 1.
         if ($active !== 0 && $active !== 1) {
             $response->getBody()->write(json_encode(
                 ["error" => "Keine gültige Zahl (nur 1 oder 0 möglich)"]
@@ -152,7 +161,7 @@ class CreateUpdateProductController
                 ->withHeader("Content-Type", "application/json");
         }
 
-        //Prüfung name
+        //Prüft ob der Name zwischen 1 und 500 Zeichen lang ist.
         if (strlen($name) > 500 || strlen($name) < 1) {
             $response->getBody()->write(json_encode(
                 ["error" => "Keine Zeichen oder zu viele Zeichen eingegeben. max.500 Zeichen"]
@@ -162,7 +171,7 @@ class CreateUpdateProductController
                 ->withHeader("Content-Type", "application/json");
         }
 
-        //Prüfung Stock
+        //Prüfung Stock auf Ganzzahl und erlaupte range.
         if (!is_int($stock) || $stock < 0 || $stock > 2147483647) {
             $response->getBody()->write(json_encode([
                 "error" => "Bestand muss eine ganze Zahl zwischen 0 und 2147483647 sein."
@@ -184,7 +193,7 @@ class CreateUpdateProductController
                 ->withHeader("Content-Type", "application/json");
         }
 
-        //Prüfung Kategorie
+        //Prüfung der Kategorie (Ganzzahl oder null).
         if (!is_int($categoryId) && $categoryId !== null) {
             $response->getBody()->write(json_encode(
                 ["error" => "Muss eine nummer sein"]
@@ -193,7 +202,7 @@ class CreateUpdateProductController
                 ->withStatus(400)
                 ->withHeader("Content-Type", "application/json");
         }
-
+        //Prüft ob Kategorie existiert.
         if ($categoryId !== null) {
             $statement = $database->prepare("SELECT * FROM category WHERE category_id = ?");
             $statement->execute([$categoryId]);
@@ -208,7 +217,7 @@ class CreateUpdateProductController
             }
         }
 
-        //Prüfung Kategorie
+        //Prüft den Preis als Gleitkommazahl.
         if (!is_double($price)) {
             $response->getBody()->write(json_encode(
                 ["error" => "Muss eine dezimal zahl sein."]

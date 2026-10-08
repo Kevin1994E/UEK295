@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * This file configures the API, database connection and routes.
+ */
+
 use Slim\Factory\AppFactory;
 
 require __DIR__ . "/../vendor/autoload.php";
@@ -26,7 +30,7 @@ $app->addBodyParsingMiddleware();
 $database = new mysqli("localhost", "root", "", "uek295_lb01");
 
 $app->post("/authenticate", [
-    authenticator::class,
+    Authenticator::class,
     "autenticate"
 ]);
 

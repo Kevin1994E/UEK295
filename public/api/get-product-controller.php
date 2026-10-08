@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles retrieving products from the database.
+ */
 class GetProductController
 {
     #[OAT\Get(
@@ -24,26 +27,32 @@ class GetProductController
             )
         ],
         responses: [
-        new OAT\Response(
-            response: 200,
-            description: 'Produkt als JSON.'
-        ),
-        new OAT\Response(
-            response: 400,
-            description: 'Ungültige Produkt-ID.'
-        ),
-        new OAT\Response(
-            response: 401,
-            description: 'Nicht authentifiziert.'
-        ),
-        new OAT\Response(
-            response: 404,
-            description: 'Produkt nicht gefunden.'
-        )
+            new OAT\Response(
+                response: 200,
+                description: 'Produkt als JSON.'
+            ),
+            new OAT\Response(
+                response: 400,
+                description: 'Ungültige Produkt-ID.'
+            ),
+            new OAT\Response(
+                response: 401,
+                description: 'Nicht authentifiziert.'
+            ),
+            new OAT\Response(
+                response: 404,
+                description: 'Produkt nicht gefunden.'
+            )
         ]
     )]
 
-
+    /**
+     * This function validates the product SKU and returns the product as JSON.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments containing the product SKU.
+     * @return Response The HTTP response.
+     */
     public static function getProduct(Request $request, Response $response, array $args)
     {
 
@@ -58,7 +67,9 @@ class GetProductController
         }
         // Ab hier ist der Token gültig
 
+        //Liest sku aus URL und entfernt Leerzeichen.
         $sku = trim($args["sku"]);
+
         if (strlen($sku) < 1 || strlen($sku) > 100) {
             $response->getBody()->write(json_encode([
                 "error" => "SKU muss 1 bis 100 Zeichen enthalten."

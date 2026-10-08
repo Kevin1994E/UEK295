@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles retrieving categories from the database.
+ */
 class GetCategoryController
 {
     #[OAT\Get(
@@ -24,26 +27,32 @@ class GetCategoryController
             )
         ],
         responses: [
-        new OAT\Response(
-            response: 200,
-            description: 'Kategorie als JSON.'
-        ),
-        new OAT\Response(
-            response: 400,
-            description: 'Ungültige Kategorie-ID.'
-        ),
-        new OAT\Response(
-            response: 401,
-            description: 'Nicht authentifiziert.'
-        ),
-        new OAT\Response(
-            response: 404,
-            description: 'Kategorie nicht gefunden.'
-        )
+            new OAT\Response(
+                response: 200,
+                description: 'Kategorie als JSON.'
+            ),
+            new OAT\Response(
+                response: 400,
+                description: 'Ungültige Kategorie-ID.'
+            ),
+            new OAT\Response(
+                response: 401,
+                description: 'Nicht authentifiziert.'
+            ),
+            new OAT\Response(
+                response: 404,
+                description: 'Kategorie nicht gefunden.'
+            )
         ]
     )]
 
-
+    /**
+     * This function validates the category ID and returns the category as JSON.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @param array $args The route arguments containing the category ID.
+     * @return Response The HTTP response.
+     */
     public static function getCategory(Request $request, Response $response, array $args)
     {
 
@@ -58,6 +67,7 @@ class GetCategoryController
         }
         // Ab hier ist der Token gültig
 
+        //Liest die category_id aus der URL.
         $categoryId = $args["category_id"];
 
         $categoryId = filter_var(

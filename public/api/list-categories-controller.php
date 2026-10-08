@@ -5,6 +5,9 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
+/**
+ * This class handles retrieving all categories from the database.
+ */
 class ListCategoriesController
 {
     #[OAT\Get(
@@ -23,7 +26,12 @@ class ListCategoriesController
         ]
     )]
 
-
+    /**
+     * This function retrieves all categories and returns them as JSON.
+     * @param Request $request The HTTP request.
+     * @param Response $response The HTTP response.
+     * @return Response The HTTP response.
+     */
     public static function listCategories(Request $request, Response $response)
     {
 
