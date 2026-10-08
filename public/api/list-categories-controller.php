@@ -10,7 +10,7 @@ class ListCategoriesController
     #[OAT\Get(
         path: '/api/v1/categories',
         summary: 'Listet alle Kategorien auf.',
-        tags: ['list_cat'],
+        tags: ['categorie'],
         responses: [
             new OAT\Response(
                 response: 200,

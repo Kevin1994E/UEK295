@@ -9,7 +9,7 @@ class authenticator
     #[OAT\Post(
         path: '/api/v1/authenticate',
         summary: 'Benutzer wird anhand von Benutzername und Passwort verifiziert.',
-        tags: ['auth'],
+        tags: ['authenticator'],
         requestBody: new OAT\RequestBody(
             required: true,
             description: 'JSON-Body muss username und password als String enthalten.',

@@ -10,7 +10,7 @@ class ListProductsController
     #[OAT\Get(
         path: '/api/v1/products',
         summary: 'Listet alle Produkte auf.',
-        tags: ['list_prod'],
+        tags: ['product'],
         responses: [
             new OAT\Response(
                 response: 200,

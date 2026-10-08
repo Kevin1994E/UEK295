@@ -10,7 +10,7 @@ class CreateUpdateProductController
     #[OAT\Put(
         path: '/api/v1/product/{sku}',
         summary: 'Es wird eine neue Produkt erstellt.',
-        tags: ['cre_prod'],
+        tags: ['product'],
         parameters: [
             new OAT\Parameter(
                 name: 'sku',
@@ -59,7 +59,7 @@ class CreateUpdateProductController
                     ),
                     new OAT\Property(
                         property: 'price',
-                        type: 'number',
+                        type: 'double',
                         example: 99.90
                     ),
                     new OAT\Property(

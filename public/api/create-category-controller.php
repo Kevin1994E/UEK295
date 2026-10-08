@@ -10,7 +10,7 @@ class CreateCategoryController
     #[OAT\Post(
         path: '/api/v1/category',
         summary: 'Es wird eine neue Kategorie erstellt.',
-        tags: ['cre_cat'],
+        tags: ['categorie'],
         requestBody: new OAT\RequestBody(
             required: true,
             description: 'JSON-Body muss active und name enthalten.',

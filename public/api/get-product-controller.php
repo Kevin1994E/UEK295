@@ -5,32 +5,32 @@ use ReallySimpleJWT\Token;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-class GetCategoryController
+class GetProductController
 {
     #[OAT\Get(
-        path: '/api/v1/category/{category_id}',
-        summary: 'Zeigt eine Kategorie anhand ihrer ID.',
-        tags: ['categorie'],
+        path: '/api/v1/product/{sku}',
+        summary: 'Zeigt ein Produkt anhand ihrer sku.',
+        tags: ['product'],
         parameters: [
             new OAT\Parameter(
-                name: 'category_id',
+                name: 'sku',
                 in: 'path',
                 required: true,
-                description: 'ID der Kategorie',
+                description: 'sku from product',
                 schema: new OAT\Schema(
-                    type: 'integer',
-                    example: '1'
+                    type: 'string',
+                    example: 'MAR-001'
                 )
             )
         ],
         responses: [
         new OAT\Response(
             response: 200,
-            description: 'Kategorie als JSON.'
+            description: 'Produkt als JSON.'
         ),
         new OAT\Response(
             response: 400,
-            description: 'Ungültige Kategorie-ID.'
+            description: 'Ungültige Produkt-ID.'
         ),
         new OAT\Response(
             response: 401,
@@ -38,13 +38,13 @@ class GetCategoryController
         ),
         new OAT\Response(
             response: 404,
-            description: 'Kategorie nicht gefunden.'
+            description: 'Produkt nicht gefunden.'
         )
         ]
     )]
 
 
-    public static function getCategory(Request $request, Response $response, array $args)
+    public static function getProduct(Request $request, Response $response, array $args)
     {
 
         global $database;
@@ -58,36 +58,29 @@ class GetCategoryController
         }
         // Ab hier ist der Token gültig
 
-        $categoryId = $args["category_id"];
-
-        $categoryId = filter_var(
-            $args["category_id"],
-            FILTER_VALIDATE_INT,
-            ["options" => ["min_range" => 1, "max_range" => 2147483647]]
-        );
-
-        if ($categoryId === false) {
-            $response->getBody()->write(json_encode(
-                ["error" => "Ungültige Kategorie ID"]
-            ));
+        $sku = trim($args["sku"]);
+        if (strlen($sku) < 1 || strlen($sku) > 100) {
+            $response->getBody()->write(json_encode([
+                "error" => "SKU muss 1 bis 100 Zeichen enthalten."
+            ]));
 
             return $response
                 ->withStatus(400)
                 ->withHeader("Content-Type", "application/json");
         }
 
-        $statement = $database->prepare("SELECT * FROM category Where category_id = ?");
+        $statement = $database->prepare("SELECT * FROM product Where sku = ?");
 
-        $statement->execute([$categoryId]);
+        $statement->execute([$sku]);
 
         $result = $statement->get_result();
 
-        // Prüft, ob die Kategorie existiert
+        // Prüft, ob die Produkt existiert
         $row_count = mysqli_num_rows($result);
 
         if ($row_count == 0) {
             $response->getBody()->write(json_encode(
-                ["error" => "category do not exist :("]
+                ["error" => "product do not exist :("]
             ));
             return $response
                 ->withStatus(404)
@@ -95,9 +88,9 @@ class GetCategoryController
         }
 
         // Daten auslesen
-        $category = mysqli_fetch_assoc($result);
+        $product = mysqli_fetch_assoc($result);
 
-        $response->getBody()->write(json_encode($category));
+        $response->getBody()->write(json_encode($product));
 
         return $response
             ->withStatus(200)

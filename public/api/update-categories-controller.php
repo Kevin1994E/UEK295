@@ -10,7 +10,7 @@ class UpdateCategoryController
     #[OAT\Patch(
         path: '/api/v1/category/{category_id}',
         summary: 'Update der Felder active und name einer Kategorie.',
-        tags: ['upd_cat'],
+        tags: ['categorie'],
         parameters: [
         new OAT\Parameter(
             name: 'category_id',
