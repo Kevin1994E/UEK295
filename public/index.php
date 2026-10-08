@@ -8,6 +8,8 @@ require_once __DIR__ . "/api/authenticator.php";
 require_once __DIR__ . "/api/create-category-controller.php";
 require_once __DIR__ . "/api/get-category-controller.php";
 require_once __DIR__ . "/api/delete-category-controller.php";
+require_once __DIR__ . "/api/list-categories-controller.php";
+require_once __DIR__ . "/api/update-categories-controller.php";
 
 $config = json_decode(file_get_contents(__DIR__ . "/../config.json"), true);
 
@@ -37,6 +39,16 @@ $app->get("/category/{category_id}", [
 $app->delete("/category/{category_id}", [
     DeleteCategoryController::class,
     "deleteCategory"
+]);
+
+$app->get("/categories", [
+    ListCategoriesController::class,
+    "listCategories"
+]);
+
+$app->patch("/category/{category_id}", [
+    UpdateCategoryController::class,
+    "updateCategory"
 ]);
 
 $app->run();
