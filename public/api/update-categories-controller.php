@@ -115,6 +115,16 @@ class UpdateCategoryController
 
         $requestBody = $request->getParsedBody();
 
+        //Prüft ob alle Pflichtfelder vorhanden sind im Json.
+        if (!isset($requestBody['name'], $requestBody['active'])) {
+            $response->getBody()->write(json_encode(
+                ["error" => "JSON pflichtfelder fehlen"]
+            ));
+            return $response
+                ->withStatus(400)
+                ->withHeader("Content-Type", "application/json");
+        }
+
         $name = trim($requestBody['name']);
         $active = $requestBody['active'];
 

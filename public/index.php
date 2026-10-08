@@ -10,6 +10,8 @@ require_once __DIR__ . "/api/get-category-controller.php";
 require_once __DIR__ . "/api/delete-category-controller.php";
 require_once __DIR__ . "/api/list-categories-controller.php";
 require_once __DIR__ . "/api/update-categories-controller.php";
+require_once __DIR__ . "/api/list-products-controller.php";
+require_once __DIR__ . "/api/create-update-product-controller.php";
 
 $config = json_decode(file_get_contents(__DIR__ . "/../config.json"), true);
 
@@ -49,6 +51,16 @@ $app->get("/categories", [
 $app->patch("/category/{category_id}", [
     UpdateCategoryController::class,
     "updateCategory"
+]);
+
+$app->get("/products", [
+    ListProductsController::class,
+    "listProducts"
+]);
+
+$app->put("/product/{sku}", [
+    CreateUpdateProductController::class,
+    "createUpdateProducts"
 ]);
 
 $app->run();
